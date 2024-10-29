@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-
+#include <iomanip> 
 using namespace std;
 
 class ALU;
@@ -46,9 +46,13 @@ private:
     int size = 256;
     string memory[256];
 public:
-    string getCell(int address);
+    string getCell(int address){
+        return memory[address];
+    }
 
-    void setCell(int address, string val);
+    void setCell(int address, string val){
+        memory[address] = val;
+    }
 };
 
 class CPU {
@@ -73,7 +77,7 @@ private:
     int size = 16;
     int memory[16];
 public:
-    int getCell(int address);
+    string getCell(int address);
 
     void setCell(int address, string val);
 };
@@ -91,15 +95,27 @@ public:
 
 class CU {
 public:
-    void load(int idxReg, int intMem, Register &reg, Memory &mem);
+    void load(int idxReg, int intMem, Register &reg, Memory &mem){
+        reg.setCell(idxReg, mem.getCell(intMem));
+    }
 
-    void load(int idxReg, int val, Register &reg);
+    void load(int idxReg, int val, Register &reg) {
+    std::stringstream stream;
+    stream << std::hex << val;
+    reg.setCell(idxReg, stream.str());
+    }
+    
+    void store(int idxReg, int idxMem, Register &reg, Memory &mem){
+        mem.setCell(idxMem, reg.getCell(idxReg));
+    }
 
-    void store(int idxReg, int idxMem, Register &reg, Memory &mem);
+    void move(int idxReg1, int idxReg2, Register &reg){
+        reg.setCell(idxReg1, reg.getCell(idxReg2));
+    }
 
-    void move(int idxReg1, int idxReg2, Register &reg);
-
-    void jump(int idxReg, int idxMem, Register &reg, int &PC);
+    void jump(int idxReg, int idxMem, Register &reg, int &PC){
+        
+    }
 
     void halt();
 };
