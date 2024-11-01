@@ -1,6 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <iomanip> 
+#include <bits/stdc++.h>
+
 using namespace std;
 
 class ALU;
@@ -20,15 +19,47 @@ private:
     bool enterFileOrlnstructions;
     Machine *machine;
 public:
-    bool getFileOrlnstructions();
+    MainUI()  {
+        enterFileOrlnstructions = false;
+        machine =nullptr;
+    }
+    bool getFileOrlnstructions(){
+        char choice;
+        cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
+        cin >> choice;
+        enterFileOrlnstructions = (choice == 'f' || choice == 'F');
+        return enterFileOrlnstructions;
+    }
 
-    void disPlayMenu();
+    void disPlayMenu(){
+        cout << "*** CPU Simulator ***\n";
+        cout << "1. Load Program\n";
+        cout << "2. Run Next Step\n";
+        cout << "3. Output State\n";
+        cout << "4. Exit\n";
+    }
 
-    string inputFileName();
+    string inputFileName(){
+        string filename;
+        cout << "Enter the program file_name: ";
+        cin >> filename;
+        return filename;
+    }
 
-    string inputInstruction();
+    string inputInstruction(){
+        string instruction;
+        cout << "Enter the instruction: ";
+        cin.ignore();
+        getline(cin, instruction);
+        return instruction;
+    }
 
-    char inputChoice();
+    char inputChoice(){
+        char choice;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        return choice;
+    }
 };
 
 class Machine {
@@ -76,21 +107,51 @@ class Register {
 private:
     int size = 16;
     int memory[16];
+    vector<string>reg;
 public:
-    string getCell(int address);
+    Register(){
+        reg = vector<string>(size, "00");
+    }
+    string getCell(int address){
+        if (address>=0&&address<size){
+            return reg[address];
+        }
+        return "";
+    }
 
-    void setCell(int address, string val);
+    void setCell(int address, string value){
+        if (address >= 0 && address < size) {
+            reg[address] = value;
+        }
+    }
 };
 
 class ALU {
 public:
-    string hexToDec();
+    string hexToDec(string hex_number){
+        string Hex_To_Dec= to_string(stoi(hex_number, nullptr, 16));
+        return Hex_To_Dec;
+    }
 
-    string decToHex();
+    string decToHex(int decimal_number){
+        return format("{:x}", decimal_number);
+    }
 
-    bool isVaild(string value);
+    bool isVaild(string value){
+        for (int i=0;i<value.size();i++){
+            if (!isxdigit(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    void add(int idx1, int idx2, int idx3, Register &reg);
+    void add(int idx1, int idx2, int idx3, Register &reg){
+        int value1 = stoi(reg.getCell(idx1), nullptr, 16);
+        int value2 = stoi(reg.getCell(idx2), nullptr, 16);
+        int result = value1 + value2;
+        reg.setCell(idx3, decToHex(result));
+    }
 };
 
 class CU {
@@ -100,11 +161,11 @@ public:
     }
 
     void load(int idxReg, int val, Register &reg) {
-    std::stringstream stream;
-    stream << std::hex << val;
-    reg.setCell(idxReg, stream.str());
+        std::stringstream stream;
+        stream << std::hex << val;
+        reg.setCell(idxReg, stream.str());
     }
-    
+
     void store(int idxReg, int idxMem, Register &reg, Memory &mem){
         mem.setCell(idxMem, reg.getCell(idxReg));
     }
@@ -114,7 +175,7 @@ public:
     }
 
     void jump(int idxReg, int idxMem, Register &reg, int &PC){
-        
+
     }
 
     void halt();
@@ -122,5 +183,5 @@ public:
 
 int main() {
 
-  return 0;
+    return 0;
 }
