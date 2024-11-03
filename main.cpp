@@ -1,295 +1,42 @@
 #include <bits/stdc++.h>
-
+#include "Machine.h"
 using namespace std;
 
-class ALU;
-
-class CU;
-
-class Machine;
-
-class Memory;
-
-class Register;
-
-class CPU;
-
-class MainUI;
-
-class MainUI {
-private:
-    bool enterFileOrlnstructions;
-    Machine *machine;
-public:
-    MainUI() {
-      enterFileOrlnstructions = false;
-      machine = nullptr;
-    }
-
-    bool getFileOrlnstructions() {
-      char choice;
-      cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
-      cin >> choice;
-      enterFileOrlnstructions = (choice == 'f' || choice == 'F');
-      return enterFileOrlnstructions;
-    }
-
-    void disPlayMenu() {
-      cout << "*** CPU Simulator ***\n";
-      cout << "1. Load Program\n";
-      cout << "2. Run Next Step\n";
-      cout << "3. Output State\n";
-      cout << "4. Exit\n";
-    }
-
-    string inputFileName() {
-      string filename;
-      cout << "Enter the program file_name: ";
-      cin >> filename;
-      return filename;
-    }
-
-    string inputInstruction() {
-      string instruction;
-      cout << "Enter the instruction: ";
-      cin.ignore();
-      getline(cin, instruction);
-      return instruction;
-    }
-
-    char inputChoice() {
-      char choice;
-      cout << "Enter your choice: ";
-      cin >> choice;
-      return choice;
-    }
-};
-
-class Register {
-private:
-    int size = 16;
-    int memory[16];
-    vector<string> reg;
-public:
-    Register() {
-      reg = vector<string>(size, "00");
-    }
-
-    string getCell(int address) {
-      if (address >= 0 && address < size) {
-        return reg[address];
-      }
-      return "";
-    }
-
-    void setCell(int address, string value) {
-      if (address >= 0 && address < size) {
-        reg[address] = value;
-      }
-    }
-
-    int getSize() { return size; }
-};
-
-
-class ALU {
-public:
-    string hexToDec(string hex_number) {
-      string Hex_To_Dec = to_string(stoi(hex_number, nullptr, 16));
-      return Hex_To_Dec;
-    }
-
-    string decToHex(int decimal_number) {
-      return format("{:x}", decimal_number);
-    }
-
-    bool isVaild(string value) {
-      for (int i = 0; i < value.size(); i++) {
-        if (!isxdigit(i)) {
-          return false;
+void app() {
+    Machine machine;
+    MainUI ui;
+    while (true) {
+        ui.disPlayMenu();
+        char choice = ui.inputChoice();
+        
+        switch (choice) {
+            case '1': 
+                if (ui.getFileOrlnstructions()) {
+                    string filename = ui.inputFileName();
+                    machine.loadProgramFile(filename);
+                    machine.outputState();
+                } else {
+                    string instruction = ui.inputInstruction();
+                }
+                break;
+            case '2':  
+                cout << "Running Next Step:" << endl;
+                machine.runNextStep();
+                break;
+            case '3':  
+                cout << "Outputting Machine State:" << endl;
+                machine.outputState();
+                break;
+            case '4':  
+                cout << "Exiting program." << endl;
+                return;
+            default:
+                cout << "Invalid choice, please try again." << endl;
         }
-      }
-      return true;
     }
-
-    void add(int idx1, int idx2, int idx3, Register &reg) {
-      int value1 = stoi(reg.getCell(idx1), nullptr, 16);
-      int value2 = stoi(reg.getCell(idx2), nullptr, 16);
-      int result = value1 + value2;
-      reg.setCell(idx3, decToHex(result));
-    }
-};
-
-class Memory {
-private:
-    int size = 256;
-    string memory[256];
-public:
-    string getCell(int address) {
-      if (address >= 0 && address < size) {
-        return memory[address];
-      }
-    }
-
-    void setCell(int address, string val) {
-      if (address >= 0 && address < size) {
-        memory[address] = val;
-      }
-    }
-
-};
-
-class CPU {
-private:
-    int programCounter;
-    string instructionRegister;
-    Register *aRegister;
-    ALU *alu;
-    CU *cu;
-    Memory *memory;
-
-public:
-    CPU(Register *reg, Memory *mem, ALU *al, CU *controlUnit)
-            : aRegister(reg), memory(mem), alu(al), cu(controlUnit), programCounter(0) {}
-
-    void runNextStep(Memory &mem) {
-      fetch(mem);
-      decode();
-      execute(*aRegister, mem, {});
-    }
-
-    void fetch(Memory &mem) {
-      instructionRegister = mem.getCell(programCounter);
-      programCounter++;
-    }
-
-    void decode() {
-      stringstream ss(instructionRegister);
-      string opcode, operand1, operand2, operand3;
-      ss >> opcode >> operand1 >> operand2 >> operand3;
-    }
-
-    void execute(Register &reg, Memory &mem, vector<int> vec) {
-      stringstream ss(instructionRegister);
-      string opcode, operand1, operand2, operand3;
-      ss >> opcode >> operand1 >> operand2 >> operand3;
-
-      if (opcode == "LOAD") {
-        int reg_num = stoi(operand1);
-        int mem_addr = stoi(operand2);
-        reg.setCell(reg_num, mem.getCell(mem_addr));
-      } else if (opcode == "ADD") {
-        int reg1 = stoi(operand1);
-        int reg2 = stoi(operand2);
-        int reg3 = stoi(operand3);
-        checkRegister(reg1, reg2, reg3);
-        alu->add(reg1, reg2, reg3, reg);
-      } else if (opcode == "STORE") {
-        int reg_num = stoi(operand1);
-        if (reg_num < 0 || reg_num >= reg.getSize()) {
-          throw out_of_range("Invalid register number for STORE.");
-        }
-        int mem_addr = stoi(operand2);
-        memory->setCell(mem_addr, reg.getCell(reg_num));
-      } else if (opcode == "HALT") {
-        cout << "Program Halted!" << endl;
-        exit(0);
-      } else {
-        cerr << "Invalid opcode: " << opcode << endl;
-      }
-    }
-
-    void outputState() {
-      cout << "Program Counter: " << programCounter << endl;
-      cout << "Instruction Register: " << instructionRegister << endl;
-      cout << "Registers:" << endl;
-      for (int i = 0; i < aRegister->getSize(); ++i) {
-        cout << "R" << i << ": " << aRegister->getCell(i) << endl;
-      }
-    }
-
-private:
-    void checkRegister(int reg1, int reg2, int reg3) {
-      if (reg1 < 0 || reg1 >= aRegister->getSize() ||
-          reg2 < 0 || reg2 >= aRegister->getSize() ||
-          reg3 < 0 || reg3 >= aRegister->getSize()) {
-        throw out_of_range("Invalid register number.");
-      }
-    }
-};
-
-
-class CU {
-public:
-    void load(int idxReg, int intMem, Register &reg, Memory &mem) {
-      reg.setCell(idxReg, mem.getCell(intMem));
-    }
-
-    void load(int idxReg, int val, Register &reg) {
-      std::stringstream stream;
-      stream << std::hex << val;
-      reg.setCell(idxReg, stream.str());
-    }
-
-    void store(int idxReg, int idxMem, Register &reg, Memory &mem) {
-      mem.setCell(idxMem, reg.getCell(idxReg));
-    }
-
-    void move(int idxReg1, int idxReg2, Register &reg) {
-      reg.setCell(idxReg1, reg.getCell(idxReg2));
-    }
-
-    void jump(int idxReg, int idxMem, Register &reg, int &PC) {
-
-    }
-
-    void halt();
-};
-
-class Machine {
-private:
-    CPU *processor;
-    Memory *memory;
-public:
-    Machine() {
-      memory = new Memory();
-      Register *reg = new Register();
-      ALU *alu = new ALU();
-      CU *cu = new CU();
-      processor = new CPU(reg, memory, alu, cu);
-    }
-
-    ~Machine() {
-      delete processor;
-      delete memory;
-    }
-
-    void loadProgramFile(const string &filename) {
-      ifstream file(filename);
-      if (!file) {
-        cerr << "Error opening file: " << filename << endl;
-        return;
-      }
-      string line;
-      int address = 0;
-      while (getline(file, line) && address < 256) {
-        memory->setCell(address++, line);
-      }
-      file.close();
-    }
-
-    void outputState() {
-      cout << "Machine State:" << endl;
-      processor->outputState();
-      cout << "Memory State:" << endl;
-      for (int i = 0; i < 256; ++i) {
-        cout << "Memory[" << i << "]: " << memory->getCell(i) << endl;
-      }
-    }
-
-};
+}
 
 int main() {
-
+  app();
   return 0;
 }
