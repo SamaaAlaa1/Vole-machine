@@ -15,7 +15,8 @@ void app() {
                     string filename = ui.inputFileName();
                     machine.loadProgramFile(filename);
                     machine.outputState();
-                } else {
+                }
+                else {
                     string instruction = ui.inputInstruction();
                 }
                 break;

@@ -1,6 +1,6 @@
-#ifndef MACHINE_H 
+#ifndef MACHINE_H
 #define MACHINE_H
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
 using namespace std;
 int hexToDec(const std::string &hexStr) {
     int decimalValue;
@@ -11,8 +11,8 @@ int hexToDec(const std::string &hexStr) {
 }
 
 string decToHex(int decimal_number) {
-    std::stringstream stream;
-    stream << std::uppercase << std::setw(2) << std::setfill('0') << std::hex << decimal_number;
+    stringstream stream;
+    stream << uppercase << setw(2) << setfill('0') << hex << decimal_number;
     return stream.str();
 }
 class ALU;
@@ -34,6 +34,7 @@ class MainUI {
 private:
     bool enterFileOrlnstructions;
     Machine *machine;
+    ALU *alu;
 public:
     MainUI() {
       enterFileOrlnstructions = false;
@@ -68,7 +69,15 @@ public:
       cout << "Enter the instruction: ";
       cin.ignore();
       getline(cin, instruction);
-      return instruction;
+        while (true) {
+            if (alu->isValid(instruction)) {
+                return instruction;
+                break;
+            }
+            else {
+                cout << "Enter a valid instruction\n";
+            }
+        }
     }
 
     char inputChoice() {
@@ -108,37 +117,143 @@ public:
 
 class ALU {
 public:
-    bool isVaild(string &value) {
-      for (int i = 0; i < value.size(); i++) {
-        if (!isxdigit(value[i])) {
-          return false;
+    bool isVaild(string instruction){
+        if (instruction.size() != 4) {
+            return false;
         }
-      }
-      return true;
+
+        if (instruction[0] == 'C') {
+            return instruction == "C000";
+        }
+
+        vector<char> valid_start = {'1', '2', '3', '4', '5', '6', 'B'};
+        if (find(valid_start.begin(), valid_start.end(), instruction[0]) == valid_start.end()) {
+            return false;
+        }
+
+        string sub_string = instruction.substr(1, 3);
+        int start_index = 0;
+        if (instruction[0] == '4') {
+            start_index = 1;
+            if (sub_string[0] != '0') {
+                return false;
+            }
+        }
+
+        for (int i=0;i<instruction.size();i++){
+            if (!isxdigit(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    void add(int idx1, int idx2, int idx3, Register &reg) {
-      int value1 = hexToDec(reg.getCell(idx1));
-      int value2 = hexToDec(reg.getCell(idx2));
-      int result = (value1 + value2)%reg.getSize();
-      reg.setCell(idx3, decToHex(result));
+    void addIntegral(int idx1, int idx2, int idx3, Register &reg) {
+        int a = hexToDec(reg.getCell(idx2));
+        int b = hexToDec(reg.getCell(idx3));
+        int result = a + b;
+        reg.setCell(idx1, decToHex(result));
     }
 
-    void addFloat(int idx1, int idx2, int idx3, Register &reg){
+    float hexToFloat(string hex_value) {
+        int int_value = hexToDec(hex_value);
+        int exponent = ((int_value >> 4) & 7) - 8;
+        float mantissa = (int_value & 15);
+        return mantissa * pow(2.0, exponent);
+    }
 
+    string floatToHex(float value) {
+        const float max = hexToFloat("FF");
+        const float min = hexToFloat("00");
+
+        if (value > max) return "FF";
+        if (value < min) return "00";
+
+        int integer = int(value * 16);
+        int exponent = 0;
+
+        while (integer > 15) {
+            integer >>= 1;
+            exponent++;
+        }
+
+        int hex_val = (exponent << 4) | integer;
+        return decToHex(hex_val);
+    }
+
+    void addFloating(int idx1, int idx2, int idx3, Register &reg) {
+        float a = hexToFloat(reg.getCell(idx2));
+        float b = hexToFloat(reg.getCell(idx3));
+        string result = floatToHex(a + b);
+        reg.setCell(idx1, result);
     }
 
     void bitwiseAND(int idx1, int idx2, int idx3, Register &reg){
-
+        int value1 = stoi(reg.getCell(idx2), nullptr, 16);
+        int value2 = stoi(reg.getCell(idx3), nullptr, 16);
+        int result = value1 & value2;
+        string hexValue;
+        if (result == 0) {
+            hexValue = "0";
+        }
+        else {
+            while (result > 0) {
+                int remainder = result % 16;
+                hexValue = "0123456789ABCDEF"[remainder] + hexValue;
+                result /= 16;
+            }
+        }
+        reg.setCell(idx1, hexValue);
     }
+
     void bitwiseXOR(int idx1, int idx2, int idx3, Register &reg){
-
+        int value1 = stoi(reg.getCell(idx2), nullptr, 16);
+        int value2 = stoi(reg.getCell(idx3), nullptr, 16);
+        int result = value1 ^ value2;
+        string hexValue;
+        if (result == 0) {
+            hexValue = "0";
+        }
+        else {
+            while (result > 0) {
+                int remainder = result % 16;
+                hexValue = "0123456789ABCDEF"[remainder] + hexValue;
+                result /= 16;
+            }
+        }
+        reg.setCell(idx1, hexValue);
     }
+
     void bitwiseOR(int idx1, int idx2, int idx3, Register &reg){
-
+        int value1 = stoi(reg.getCell(idx2), nullptr, 16);
+        int value2 = stoi(reg.getCell(idx3), nullptr, 16);
+        int result = value1 | value2;
+        string hexValue;
+        if (result == 0) {
+            hexValue = "0";
+        }
+        else {
+            while (result > 0) {
+                int remainder = result % 16;
+                hexValue = "0123456789ABCDEF"[remainder] + hexValue;
+                result /= 16;
+            }
+        }
+        reg.setCell(idx1, hexValue);
     }
-    void rotate(int idx, int x,Register &reg){
 
+    void rotate(int idx, int x, Register &reg) {
+        int value = stoi(reg.getCell(idx), nullptr, 16);
+        x = x % 16;
+        int rotatedValue = (value << x) | (value >> (16 - x));
+        rotatedValue &= 0xFFFF;
+        stringstream stream;
+        stream << hex << uppercase << rotatedValue;
+        string hexValue = stream.str();
+        while (hexValue.size() < 4) {
+            hexValue = "0" + hexValue;
+        }
+        reg.setCell(idx, hexValue);
     }
 };
 
@@ -164,7 +279,7 @@ public:
         memory[address] = val;
       }
     }
-   
+
 };
 class CU {
 public:
@@ -186,7 +301,7 @@ public:
 
     void jump(int idxReg, int idxMem, Register &reg, int &PC) {
         if(reg.getCell(idxReg) == reg.getCell(0)){
-            PC = idxMem; 
+            PC = idxMem;
         }
     }
 
@@ -223,10 +338,10 @@ public:
 
     void execute(Register &reg, Memory &mem) {
     cout << instructionRegister << endl;
-    string opcode = instructionRegister.substr(0, 1); 
-    string operand1 = instructionRegister.substr(1, 1); 
-    string operand2 = instructionRegister.substr(2, 1); 
-    string operand3 = instructionRegister.substr(3, 1); 
+    string opcode = instructionRegister.substr(0, 1);
+    string operand1 = instructionRegister.substr(1, 1);
+    string operand2 = instructionRegister.substr(2, 1);
+    string operand3 = instructionRegister.substr(3, 1);
     cout << "Opcode: " << opcode << ", Operand1: " << operand1 << ", Operand2: " << operand2 << ", Operand3: " << operand3 << endl;
       if(opcode == "1"){
         int ireg = hexToDec(operand1);
@@ -256,13 +371,13 @@ public:
         int ireg1 = hexToDec(operand1);
         int ireg2 = hexToDec(operand2);
         int ireg3 = hexToDec(operand3);
-        alu->add(ireg1,ireg2,ireg3,reg);
+        alu->addIntegral(ireg1,ireg2,ireg3,reg);
       }
       else if(opcode == "6"){
         int ireg1 = hexToDec(operand1);
         int ireg2 = hexToDec(operand2);
         int ireg3 = hexToDec(operand3);
-        alu->addFloat(ireg1,ireg2,ireg3,reg);
+        alu->addFloating(ireg1,ireg2,ireg3,reg);
       }
       else if(opcode == "7"){
         int ireg1 = hexToDec(operand1);
@@ -357,7 +472,7 @@ public:
       while (getline(file, line) && address < 256) {
         for (size_t i = 0; i < line.size() && address < 256; i += 2) {
             string chunk = line.substr(i, 2);
-            if (chunk.size() < 2) chunk += "0"; 
+            if (chunk.size() < 2) chunk += "0";
             memory->setCell(address++, chunk);
         }
     }
