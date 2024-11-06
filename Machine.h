@@ -2,10 +2,10 @@
 #define MACHINE_H
 #include <bits/stdc++.h>
 using namespace std;
-int hexToDec(const std::string &hexStr) {
+int hexToDec(const string &hexStr) {
     int decimalValue;
-    std::stringstream ss;
-    ss << std::hex << hexStr;
+    stringstream ss;
+    ss << hex << hexStr;
     ss >> decimalValue;
     return decimalValue;
 }
@@ -28,65 +28,6 @@ class Register;
 class CPU;
 
 class MainUI;
-
-
-class MainUI {
-private:
-    bool enterFileOrlnstructions;
-    Machine *machine;
-    ALU *alu;
-public:
-    MainUI() {
-      enterFileOrlnstructions = false;
-      machine = nullptr;
-    }
-
-    bool getFileOrlnstructions() {
-      char choice;
-      cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
-      cin >> choice;
-      enterFileOrlnstructions = (choice == 'f' || choice == 'F');
-      return enterFileOrlnstructions;
-    }
-
-    void disPlayMenu() {
-      cout << "*** CPU Simulator ***\n";
-      cout << "1. Load Program\n";
-      cout << "2. Run Next Step\n";
-      cout << "3. Output State\n";
-      cout << "4. Exit\n";
-    }
-
-    string inputFileName() {
-      string filename;
-      cout << "Enter the program file_name: ";
-      cin >> filename;
-      return filename;
-    }
-
-    string inputInstruction() {
-      string instruction;
-      cout << "Enter the instruction: ";
-      cin.ignore();
-      getline(cin, instruction);
-        while (true) {
-            if (alu->isValid(instruction)) {
-                return instruction;
-                break;
-            }
-            else {
-                cout << "Enter a valid instruction\n";
-            }
-        }
-    }
-
-    char inputChoice() {
-      char choice;
-      cout << "Enter your choice: ";
-      cin >> choice;
-      return choice;
-    }
-};
 
 class Register {
 private:
@@ -121,11 +62,9 @@ public:
         if (instruction.size() != 4) {
             return false;
         }
-
         if (instruction[0] == 'C') {
             return instruction == "C000";
         }
-
         vector<char> valid_start = {'1', '2', '3', '4', '5', '6', 'B'};
         if (find(valid_start.begin(), valid_start.end(), instruction[0]) == valid_start.end()) {
             return false;
@@ -141,7 +80,7 @@ public:
         }
 
         for (int i=0;i<instruction.size();i++){
-            if (!isxdigit(i)) {
+            if (!isxdigit(instruction[i])) {
                 return false;
             }
         }
@@ -310,8 +249,6 @@ public:
             PC = idxMem;
         }
     }
-
-    void halt();
 };
 class CPU {
 private:
@@ -328,6 +265,7 @@ public:
 
     void runNextStep(Memory &mem,Register &reg) {
       fetch(mem);
+      outputState();
       execute(reg, mem);
     }
 
@@ -352,15 +290,16 @@ public:
       else if(opcode == "2"){
         int ireg = hexToDec(operand1);
         string xy = operand2 + operand3;
-        cout << "Before: R" << ireg << " = " << reg.getCell(ireg) << endl;
         cu->load(ireg,xy,reg);
-        cout << "After: R" << ireg << " = " << reg.getCell(ireg) << endl;
       }
       else if(opcode == "3"){
         int ireg = hexToDec(operand1);
         string xy = operand2 + operand3;
         int imem = hexToDec(xy);
         cu->store(ireg,imem,reg,mem);
+        if(operand2 == "0" &&operand3 == "0"){
+          cout << "Output \nDecimal: " << hexToDec(mem.getCell(0)) << "ASCII Equivalent: "<< char(hexToDec(mem.getCell(0))) << endl;
+        }
       }
       else if(opcode == "4"){
         int ireg1 = hexToDec(operand2);
@@ -479,6 +418,15 @@ public:
       file.close();
     }
 
+    void loadProgram(const string &instructions) {
+    int address = 0;
+    for (size_t i = 0; i < instructions.size() && address < 256; i += 2) {
+        string chunk = instructions.substr(i, 2);
+        if (chunk.size() < 2) chunk += "0"; 
+        memory->setCell(address++, chunk);  
+    }
+}
+
     void outputState() {
     cout << "Machine State:" << endl;
     processor->outputState();
@@ -500,6 +448,65 @@ public:
 
     void runNextStep() {
       processor->runNextStep(*memory,*reg);
+    }
+};
+
+class MainUI {
+private:
+    bool enterFileOrlnstructions;
+    Machine *machine;
+    ALU *alu;
+public:
+    MainUI() {
+      enterFileOrlnstructions = false;
+      machine = nullptr;
+    }
+
+    bool getFileOrlnstructions() {
+      char choice;
+      cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
+      cin >> choice;
+      enterFileOrlnstructions = (choice == 'f' || choice == 'F');
+      return enterFileOrlnstructions;
+    }
+
+    void disPlayMenu() {
+      cout << "*** CPU Simulator ***\n";
+      cout << "1. Load Program\n";
+      cout << "2. Run Next Step\n";
+      cout << "3. Output State\n";
+      cout << "4. Exit\n";
+    }
+
+    string inputFileName() {
+      string filename;
+      cout << "Enter the program file_name: ";
+      cin >> filename;
+      return filename;
+    }
+
+    string inputInstruction() {
+      string instruction;
+      cout << "Enter the instruction: ";
+      cin.ignore();
+      getline(cin, instruction);
+        while (true) {
+            if (alu->isVaild(instruction)) {
+                return instruction;
+                break;
+            }
+            else {
+                cout << "Enter a valid instruction\n";
+                getline(cin, instruction);
+            }
+        }
+    }
+
+    char inputChoice() {
+      char choice;
+      cout << "Enter your choice: ";
+      cin >> choice;
+      return choice;
     }
 };
 #endif

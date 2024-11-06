@@ -8,6 +8,7 @@ void app() {
     while (true) {
         ui.disPlayMenu();
         char choice = ui.inputChoice();
+
         
         switch (choice) {
             case '1': 
@@ -18,6 +19,7 @@ void app() {
                 }
                 else {
                     string instruction = ui.inputInstruction();
+                    machine.loadProgram(instruction);
                 }
                 break;
             case '2':  
