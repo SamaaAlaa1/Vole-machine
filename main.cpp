@@ -9,7 +9,6 @@ void app() {
         ui.disPlayMenu();
         char choice = ui.inputChoice();
 
-        
         switch (choice) {
             case '1': 
                 if (ui.getFileOrlnstructions()) {
