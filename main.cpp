@@ -22,8 +22,22 @@ void app() {
                 }
                 break;
             case '2':  
-                cout << "Running Next Step:" << endl;
-                machine.runNextStep();
+                cout << "Run:" << endl;
+                cout << "1.Run the Whole program" << endl;
+                cout << "2.Run one step"<<endl;
+                char c;
+                cin >> c;
+                if(c == '1'){
+                   cout << "Warning if there is no C000 it will be infinty loop" << endl;
+                   while(true){
+                    machine.runNextStep();
+                   }
+                }
+                else if(c == '2'){
+                    machine.runNextStep();
+                    machine.outputState();
+                }
+                else cout << "Invalid choice" << endl;
                 break;
             case '3':  
                 cout << "Outputting Machine State:" << endl;
