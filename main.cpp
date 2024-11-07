@@ -28,9 +28,10 @@ void app() {
                 char c;
                 cin >> c;
                 if(c == '1'){
-                   cout << "Warning if there is no C000 it will be infinty loop" << endl;
+                   cout << "----------Warning!!!--------\nif there is no C000 it will be infinty loop" << endl;
                    while(true){
                     machine.runNextStep();
+                    machine.outputState();
                    }
                 }
                 else if(c == '2'){

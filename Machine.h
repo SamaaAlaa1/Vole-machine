@@ -250,7 +250,7 @@ public:
         }
     }
 };
-class CPU {
+class CPU : public ALU, public CU, public Register{
 private:
     int programCounter;
     string instructionRegister;
@@ -298,7 +298,7 @@ public:
         int imem = hexToDec(xy);
         cu->store(ireg,imem,reg,mem);
         if(operand2 == "0" &&operand3 == "0"){
-          cout << "Output \nDecimal: " << hexToDec(mem.getCell(0)) << "ASCII Equivalent: "<< char(hexToDec(mem.getCell(0))) << endl;
+          cout << "Output \nDecimal: " << hexToDec(mem.getCell(0)) << " ASCII Equivalent: "<< char(hexToDec(mem.getCell(0))) << endl;
         }
       }
       else if(opcode == "4"){
