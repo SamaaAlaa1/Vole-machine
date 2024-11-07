@@ -90,7 +90,7 @@ public:
     void addIntegral(int idx1, int idx2, int idx3, Register &reg) {
         int a = hexToDec(reg.getCell(idx2));
         int b = hexToDec(reg.getCell(idx3));
-        int result = a + b;
+        int result = (a + b)% 256;
         reg.setCell(idx1, decToHex(result));
     }
 
