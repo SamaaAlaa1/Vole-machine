@@ -463,12 +463,18 @@ public:
     }
 
     bool getFileOrlnstructions() {
-      char choice;
-      cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
-      cin >> choice;
-      enterFileOrlnstructions = (choice == 'f' || choice == 'F');
-      return enterFileOrlnstructions;
+    char choice;
+    while (true) {
+        cout << "Enter 'f' to load instructions from a file or 'm' to enter instructions manually: ";
+        cin >> choice;
+        if (choice == 'f' || choice == 'F' || choice == 'm' || choice == 'M') {
+            enterFileOrlnstructions = (choice == 'f' || choice == 'F');
+            return enterFileOrlnstructions;
+        } else {
+            cout << "Invalid input. Please enter 'f' or 'm'." << endl;
+        }
     }
+}
 
     void disPlayMenu() {
       cout << "*** CPU Simulator ***\n";
