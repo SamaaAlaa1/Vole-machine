@@ -1,0 +1,214 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 592
+  ClientWidth = 876
+  Fill.Color = xFF4928A1
+  Fill.Kind = Solid
+  Position = DesktopCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object reg: TListBox
+    Margins.Left = 10.000000000000000000
+    Margins.Top = 10.000000000000000000
+    Margins.Right = 10.000000000000000000
+    Margins.Bottom = 10.000000000000000000
+    Position.X = 744.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 315.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'listboxstyle'
+    TabOrder = 0
+    DisableMouseWheel = True
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = 'listboxitemlabel'
+    DefaultItemStyles.GroupHeaderStyle = 'listboxgroupheader'
+    DefaultItemStyles.GroupFooterStyle = ''
+    Viewport.Width = 69.000000000000000000
+    Viewport.Height = 311.000000000000000000
+  end
+  object load: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 1
+    Position.X = 238.000000000000000000
+    Position.Y = 224.000000000000000000
+    Size.Width = 179.000000000000000000
+    Size.Height = 43.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Store: TButton
+    StyledSettings = [Family]
+    Position.X = 256.000000000000000000
+    Position.Y = 296.000000000000000000
+    Size.Width = 135.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'buttonstyle'
+    TabOrder = 2
+    Text = 'Store'
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    TextSettings.Trimming = None
+    OnClick = StoreClick
+  end
+  object Run: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 552.000000000000000000
+    Position.Y = 338.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Run'
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    TextSettings.Trimming = None
+    OnClick = RunClick
+  end
+  object Button1: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 552.000000000000000000
+    Position.Y = 224.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 32.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Clear Memory'
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    TextSettings.Trimming = None
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 552.000000000000000000
+    Position.Y = 278.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Clear Register'
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    TextSettings.Trimming = None
+    OnClick = Button2Click
+  end
+  object Brush1: TBrushObject
+    StyleName = 'Brush1'
+    Brush.Color = xFF4928A1
+  end
+  object memory: TListBox
+    StyleName = 'backgroundstyle'
+    Position.X = 30.000000000000000000
+    Position.Y = 105.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 400.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'memoryStyle1'
+    TabOrder = 8
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = 'listboxitemlabel'
+    DefaultItemStyles.GroupHeaderStyle = 'listboxgroupheader'
+    DefaultItemStyles.GroupFooterStyle = ''
+    Viewport.Width = 165.000000000000000000
+    Viewport.Height = 396.000000000000000000
+  end
+  object Button3: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 256.000000000000000000
+    Position.Y = 362.000000000000000000
+    Size.Width = 135.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    Text = 'Load File'
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+    TextSettings.Trimming = None
+    OnClick = Button3Click
+  end
+  object output: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 13
+    ReadOnly = True
+    Position.X = 296.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 281.000000000000000000
+    Size.Height = 50.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 392
+    Top = 376
+  end
+  object R: TListBox
+    Position.X = 704.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 41.000000000000000000
+    Size.Height = 315.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 18
+    AlternatingRowBackground = True
+    DisableFocusEffect = True
+    DefaultItemStyles.ItemStyle = ''
+    DefaultItemStyles.GroupHeaderStyle = ''
+    DefaultItemStyles.GroupFooterStyle = ''
+    Viewport.Width = 37.000000000000000000
+    Viewport.Height = 311.000000000000000000
+  end
+  object cpu: TLabel
+    StyledSettings = [Family]
+    Position.X = 616.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 168.000000000000000000
+    Size.Height = 42.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 20.000000000000000000
+    TextSettings.Font.StyleExt = {00090000000000000004000000}
+    TextSettings.FontColor = claSeashell
+    TextSettings.HorzAlign = Center
+    Text = 'CPU'
+    TabOrder = 19
+  end
+  object ColorKeyAnimation1: TColorKeyAnimation
+    Duration = 0.200000002980232200
+    Keys = <>
+    PropertyName = 'Fill.Color'
+    StartFromCurrent = False
+  end
+  object Label1: TLabel
+    StyledSettings = [Family]
+    Position.X = 70.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 20.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.FontColor = claSeashell
+    Text = 'Memory'
+    TabOrder = 21
+  end
+  object Label2: TLabel
+    StyledSettings = [Family]
+    Position.X = 392.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 128.000000000000000000
+    Size.Height = 24.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 20.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.FontColor = claSeashell
+    Text = 'Output'
+    TabOrder = 22
+  end
+  object Label3: TLabel
+    StyledSettings = [Family]
+    Position.X = 704.000000000000000000
+    Position.Y = 127.000000000000000000
+    TextSettings.Font.Size = 16.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.FontColor = claSeashell
+    Text = 'Register'
+    TabOrder = 23
+  end
+end

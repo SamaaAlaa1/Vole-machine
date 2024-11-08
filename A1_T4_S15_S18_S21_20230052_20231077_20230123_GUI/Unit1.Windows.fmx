@@ -1,0 +1,43 @@
+inherited Form1_Windows: TForm1_Windows
+  DesignerMasterStyle = 0
+  inherited reg: TListBox
+    Viewport.Width = 53.000000000000000000
+    Viewport.Height = 365.000000000000000000
+  end
+  inherited Store: TButton
+    TextSettings.Font.Size = 14.000000000000000000
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+  end
+  inherited Run: TButton
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+  end
+  inherited Button1: TButton
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+  end
+  inherited Button2: TButton
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+  end
+  inherited memory: TListBox
+    Viewport.Width = 165.000000000000000000
+    Viewport.Height = 396.000000000000000000
+  end
+  inherited Button3: TButton
+    TextSettings.Font.StyleExt = {00060000000000000004000000}
+  end
+  inherited R: TListBox
+    Viewport.Width = 196.000000000000000000
+    Viewport.Height = 196.000000000000000000
+  end
+  inherited cpu: TLabel
+    TextSettings.Font.StyleExt = {00090000000000000004000000}
+  end
+  inherited Label1: TLabel
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+  end
+  inherited Label2: TLabel
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+  end
+  inherited Label3: TLabel
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+  end
+end
